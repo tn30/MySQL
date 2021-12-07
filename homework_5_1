@@ -1,0 +1,117 @@
+USE vk;
+
+DESCRIBE users;
+
+DROP TABLE IF EXISTS users3;
+
+CREATE TABLE users3(
+	id SERIAL PRIMARY KEY,
+	name VARCHAR(250) COMMENT 'Имя контакта',
+	lastname VARCHAR(250) COMMENT 'Фамилия контакта', 
+	created_at DATETIME,
+	updated_at DATETIME,
+	INDEX (lastname)
+);
+
+ALTER TABLE users3 ADD COLUMN birthday_at DATE;
+
+INSERT INTO users3 (name, lastname, created_at, updated_at, birthday_at)
+VALUES ('Петр','Иванов','2021-01-01 21:00:00','2021-12-01 22:15:15','1978-10-03'),
+       ('Сергей','Петров','2021-01-01 22:10:05','2021-12-01 22:15:15','1978-10-05');
+       
+UPDATE users3 SET created_at=NOW(), updated_at=NOW();
+
+DROP TABLE IF EXISTS users3;
+
+CREATE TABLE users3(
+	id SERIAL PRIMARY KEY,
+	name VARCHAR(250) COMMENT 'Имя контакта',
+	lastname VARCHAR(250) COMMENT 'Фамилия контакта',
+	birthday_at DATE,
+	created_at VARCHAR(250),
+	updated_at VARCHAR(250),
+	INDEX (lastname)
+);
+
+INSERT INTO users3 (name, lastname, created_at, updated_at, birthday_at)
+VALUES ('Петр','Иванов','2021-01-01 21:00','2021-12-01 22:15','1978-10-03'),
+       ('Сергей','Петров','2021-01-01 22:10','2021-12-01 22:15','1978-10-05');
+
+SELECT STR_TO_DATE (created_at,'%d-%m-%Y %k:%i') FROM users3;
+
+UPDATE 
+  users3 
+   SET
+created_at = STR_TO_DATE (created_at, '%d.%m.%Y %k:%i'),
+updated_at = STR_TO_DATE (updated_at, '%d.%m.%Y %k:%i');
+
+SELECT * FROM users3;
+
+ALTER TABLE 
+      users3
+       CHANGE 
+           created_at created_at DATETIME DEFAULT CURRENT_TIMESTAMP;
+          
+ALTER TABLE 
+      users3
+       CHANGE 
+           updated_at updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+          
+DESCRIBE users3;
+
+CREATE TABLE storehouses_products (
+	id SERIAL PRIMARY KEY,
+	storehouses_id INT UNSIGNED,
+	product_id INT UNSIGNED,
+	value INT UNSIGNED COMMENT 'Запас товарной позиции на складе',
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) COMMENT 'Запасы на складе';
+
+INSERT INTO storehouses_products (storehouses_id,product_id,value)
+VALUES (1,215,0),
+       (1,216,2500),
+       (1,217,0),
+       (1,218,30),
+       (1,219,500),
+       (1,220,1);
+
+SELECT * FROM storehouses_products ORDER BY value;
+
+SELECT id,value,IF(value>0,0,1) AS sort FROM storehouses_products ORDER BY value;
+
+SELECT * FROM storehouses_products ORDER BY IF(value>0,0,1), value;
+
+SELECT * FROM  users3;
+SELECT name, DATE_FORMAT(birthday_at, '%M') FROM users3;
+SELECT name FROM  users3 WHERE DATE_FORMAT(birthday_at, '%M') = 'october';
+
+SELECT * FROM catalogs WHERE id (5,1,2);
+
+SELECT id, name, FIELD(id,5,1,2) AS pos FROM catalogs WHERE id IN (5,1,2);
+SELECT * FROM catalogs WHERE id IN (5,1,2) ORDER BY FIELD(id,5,1,2);
+
+SELECT TIMESTAMPDIFF(YEAR,birthday_at,NOW()) AS age
+  FROM users4;
+SELECT AVG(TIMESTAMPDIFF(YEAR,birthday_at,NOW())) AS age
+  FROM users4;
+SELECT name, birthday_at FROM users4;
+
+SELECT MONTH (birthday_at), DAY (birthday_at) FROM users4;
+
+SELECT YEAR (NOW()), MONTH (birthday_at), DAY (birthday_at) FROM users4;
+
+SELECT CONCAT_WS('-', YEAR (NOW()), MONTH (birthday_at), DAY (birthday_at)) AS day FROM users4;
+SELECT DATE(CONCAT_WS('-', YEAR (NOW()), MONTH (birthday_at), DAY (birthday_at))) AS day FROM users4;
+SELECT DATE_FORMAT(DATE(CONCAT_WS('-', YEAR (NOW()), MONTH (birthday_at), DAY (birthday_at))),'%W') AS day FROM users4;
+SELECT DATE_FORMAT(DATE(CONCAT_WS('-', YEAR (NOW()), MONTH (birthday_at), DAY (birthday_at))),'%W') AS day 
+  FROM users4
+  GROUP BY 
+      day;
+     
+SELECT DATE_FORMAT(DATE(CONCAT_WS('-', YEAR (NOW()), MONTH (birthday_at), DAY (birthday_at))),'%W') AS DAY, 
+   COUNT(*)AS total
+FROM users4
+  GROUP BY 
+      day;
+  
