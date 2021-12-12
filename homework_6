@@ -1,0 +1,65 @@
+USE vk;
+ 
+SELECT
+    from_user_id
+    , COUNT(*) as send 
+FROM messages 
+WHERE to_user_id=1
+GROUP BY from_user_id
+ORDER BY send DESC
+LIMIT 1;
+
+
+SELECT
+    to_user_id
+    , COUNT(*) as send 
+FROM messages 
+WHERE from_user_id=1
+GROUP BY to_user_id
+ORDER BY send DESC
+LIMIT 1;
+
+-- непонятно, как объединить, не сообразила
+
+SELECT COUNT(*) as 'Likes' FROM profiles WHERE (YEAR(NOW())-YEAR(birthday)) < 10;
+
+
+CREATE TABLE `profiles` (
+  `user_id` bigint unsigned NOT NULL,
+  `gender` enum('f','m','x') NOT NULL,
+  `birthday` date NOT NULL,
+  `photo_id` bigint unsigned DEFAULT NULL,
+  `city` varchar(130) DEFAULT NULL,
+  `country` varchar(130) DEFAULT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `photo_id` (`photo_id`),
+  UNIQUE KEY `photo_id_2` (`photo_id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+ 
+ INSERT INTO `profiles` VALUES (1,'m','1989-04-09',1,'Hamillfurt','Austria'),
+(2,'x','1991-11-11',13,'Westburgh','Austria'),
+(3,'f','2000-10-01',NULL,'Camilahaven','Russia'),
+(4,'f','1977-12-18',NULL,'Osinskibury','USA'),
+(5,'f','1985-10-14',5,'Raphaellestad','USA'),
+(6,'x','2006-12-02',17,'Hansenburgh','USA'),
+(7,'x','2014-12-27',NULL,'Jessycamouth','Russia'),
+(8,'x','1970-04-06',NULL,'East Carrieborough','Canada'),
+(9,'x','2020-02-28',9,'Anabellestad','Canada'),
+(10,'m','1992-01-27',21,'Port Charity','Germany'),
+(11,'x','2002-04-29',NULL,'West Lenniemouth','France');
+ 
+SELECT * FROM profiles;
+
+SELECT * FROM posts_likes;
+
+SELECT gender, user_id FROM profiles;
+
+
+SELECT
+    user_id, COUNT(*) as 'êîë-âî' FROM posts_likes GROUP BY user_id
+   ORDER BY 'êîë-âî' DESC
+LIMIT 1;
+
+SELECT gender, user_id FROM profiles
+WHERE user_id=1;
+
